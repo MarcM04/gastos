@@ -1,0 +1,12 @@
+{
+  "name": "gastos",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "App para apuntar gastos e ingresos a mano. Sin dependencias.",
+  "scripts": {
+    "start": "node servidor.js",
+    "test": "node --test",
+    "publicar": "node scripts/preparar.js"
+  }
+}

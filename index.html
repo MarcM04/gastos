@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14532d">
+<title>Gastos</title>
+<link rel="stylesheet" href="app.css">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icono-180.png">
+<link rel="icon" href="icons/icono-192.png" type="image/png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Gastos">
+<meta name="description" content="Apuntar gastos e ingresos a mano, guardados en este dispositivo.">
+</head>
+<body>
+
+<header class="cabecera">
+  <h1 id="titulo">Gastos</h1>
+</header>
+
+<main>
+  <!-- Pantalla 1: apuntar y ver movimientos -->
+  <section id="pantalla-apuntar" class="pantalla">
+    <form id="formulario" class="tarjeta" novalidate>
+      <div class="tipo" role="group" aria-label="Tipo de movimiento">
+        <button type="button" class="tipo-opcion activo" data-tipo="gasto" aria-pressed="true">Gasto</button>
+        <button type="button" class="tipo-opcion" data-tipo="ingreso" aria-pressed="false">Ingreso</button>
+      </div>
+
+      <label class="campo" for="importe">
+        <span class="etiqueta">Importe</span>
+        <span class="importe-caja">
+          <input id="importe" type="text" inputmode="decimal" autocomplete="off"
+                 placeholder="0,00" enterkeyhint="done" aria-describedby="error">
+          <span class="moneda" aria-hidden="true">€</span>
+        </span>
+      </label>
+
+      <fieldset class="campo">
+        <legend class="etiqueta">Categoría</legend>
+        <div id="categorias" class="chips"></div>
+      </fieldset>
+
+      <label class="campo" for="fecha">
+        <span class="etiqueta">Fecha</span>
+        <input id="fecha" type="date">
+      </label>
+
+      <label class="campo" for="nota">
+        <span class="etiqueta">Nota (opcional)</span>
+        <input id="nota" type="text" autocomplete="off" maxlength="120">
+      </label>
+
+      <p id="error" class="error" role="alert" hidden></p>
+
+      <div class="acciones">
+        <button type="submit" id="guardar" class="boton-principal">Guardar</button>
+        <button type="button" id="cancelar" class="boton-secundario" hidden>Cancelar</button>
+      </div>
+    </form>
+
+    <section class="seccion">
+      <h2>Movimientos</h2>
+      <p id="vacio" class="vacio" hidden>Todavía no has apuntado nada.</p>
+      <ul id="lista" class="lista"></ul>
+    </section>
+  </section>
+
+  <!-- Pantalla 2: resumen del mes -->
+  <section id="pantalla-resumen" class="pantalla" hidden>
+    <div class="selector-mes">
+      <button type="button" id="mes-anterior" class="icono" aria-label="Mes anterior">‹</button>
+      <span id="mes" class="nombre-mes">—</span>
+      <button type="button" id="mes-siguiente" class="icono" aria-label="Mes siguiente">›</button>
+    </div>
+
+    <div class="tarjeta totales">
+      <div class="total">
+        <span class="etiqueta">Ingresos</span>
+        <span id="total-ingresos" class="cifra ingreso">0,00 €</span>
+      </div>
+      <div class="total">
+        <span class="etiqueta">Gastos</span>
+        <span id="total-gastos" class="cifra gasto">0,00 €</span>
+      </div>
+      <div class="total balance">
+        <span class="etiqueta">Balance</span>
+        <span id="total-balance" class="cifra">0,00 €</span>
+      </div>
+    </div>
+
+    <section class="tarjeta">
+      <h2>Gastos por categoría</h2>
+      <p id="sin-gastos" class="vacio" hidden>Ningún gasto este mes.</p>
+      <ul id="resumen-categorias" class="lista-cat"></ul>
+    </section>
+  </section>
+
+  <!-- Pantalla 3: ajustes (categorías) -->
+  <section id="pantalla-ajustes" class="pantalla" hidden>
+    <p id="error-cat" class="error" role="alert" hidden></p>
+
+    <section class="tarjeta">
+      <h2>Categorías de gastos</h2>
+      <ul id="cat-gasto" class="lista-cat"></ul>
+      <form class="anadir" data-tipo="gasto">
+        <input type="text" maxlength="40" placeholder="Nueva categoría" aria-label="Nueva categoría de gasto">
+        <button type="submit" class="boton-secundario">Añadir</button>
+      </form>
+    </section>
+
+    <section class="tarjeta">
+      <h2>Categorías de ingresos</h2>
+      <ul id="cat-ingreso" class="lista-cat"></ul>
+      <form class="anadir" data-tipo="ingreso">
+        <input type="text" maxlength="40" placeholder="Nueva categoría" aria-label="Nueva categoría de ingreso">
+        <button type="submit" class="boton-secundario">Añadir</button>
+      </form>
+    </section>
+
+    <p class="aviso">
+      Al renombrar una categoría se renombra también en los movimientos que ya la usaban.
+      Al borrarla, esos movimientos se quedan como están.
+    </p>
+
+    <section class="tarjeta">
+      <h2>Copia de seguridad</h2>
+      <p class="aviso">
+        Tus movimientos están guardados solo en este dispositivo. Exporta un archivo de vez en
+        cuando y guárdalo donde no se pierda: es lo que te devuelve los datos si borras el
+        navegador, desinstalas la app o cambias de móvil.
+      </p>
+      <div class="acciones">
+        <button type="button" id="exportar" class="boton-principal">Exportar</button>
+        <button type="button" id="importar" class="boton-secundario">Importar</button>
+      </div>
+      <input type="file" id="archivo" accept=".json,application/json" hidden>
+      <p id="estado-copia" class="aviso" role="status"></p>
+    </section>
+  </section>
+</main>
+
+<nav class="barra" aria-label="Secciones">
+  <button type="button" data-pantalla="apuntar" class="activo" aria-current="page">Apuntar</button>
+  <button type="button" data-pantalla="resumen" aria-current="false">Resumen</button>
+  <button type="button" data-pantalla="ajustes" aria-current="false">Ajustes</button>
+</nav>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
